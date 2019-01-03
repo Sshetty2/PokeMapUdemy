@@ -21,12 +21,11 @@ class Signin extends React.Component{
         return(
             <View style={{flex: 1}}>
                 <ImageBackground source={myBackground} style={styles.backgroundImage}>
-                    <View style={{}}>
+                    <View style={styles.inputStyle}>
                         <Form>
                             <Item floatingLabel>
                                 <Label>Email</Label>
                                 <Input 
-                                    style={{}}
                                     autoCorrect={false}
                                     onChangeText={(email)=>this.setState({email})}
                                     />
@@ -34,7 +33,6 @@ class Signin extends React.Component{
                             <Item floatingLabel>
                                 <Label>Password</Label>
                                 <Input 
-                                    style={{}}
                                     autoCorrect={false}
                                     onChangeText={(password)=>this.setState({password})}
                                     secureTextEntry
@@ -47,7 +45,7 @@ class Signin extends React.Component{
                                 block
                                 onPress={this.login}
                                 >
-                                    <Text>Sign In/Sign Up</Text>
+                                    <Text style={{color:'white'}}>Sign In/Sign Up</Text>
                             </Button>
                         </View>
                     </View>
@@ -59,10 +57,16 @@ class Signin extends React.Component{
 
 const styles = {
     backgroundImage: {
-            flex: 1,
-            resizeMode: 'cover',
-            width: width,
-            height: height
+        flex: 1,
+        resizeMode: 'cover',
+        width: width,
+        height: height
+    },
+    inputStyle: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        margin: 10
     }
 }
 
