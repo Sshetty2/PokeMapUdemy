@@ -2,9 +2,9 @@ import React from 'react';
 import {View,Dimensions,ImageBackground,Text} from 'react-native';
 import {Form,Item,Label,Input,Button} from 'native-base';
 
-
 var myBackground = require('../assets/landing.jpg');
-var {height, width} = Dimensions.get('window');
+var height = Dimensions.get('window').height;
+var width = Dimensions.get('window').width;
 
 class SignIn extends React.Component{
 	state = {
@@ -12,67 +12,61 @@ class SignIn extends React.Component{
 		password: ""
 	}
 	logIn = () =>{
-		const {email, password} = this.state;
+		var email = this.state.email;
+		var password = this.state.password;
+
 		this.props.signIn(email,password);
 	}
 	render(){
 		return(
 			<View style={{flex: 1}}>
 				<ImageBackground source={myBackground} style={styles.backgroundImage}>
-					<View style={styles.viewStyle}>
+					<View style={styles.inputStyle}>
 						<Form>
-		                    <Item floatingLabel>
-		                        <Label>Email</Label>
-		                        <Input 
-		                        	onChangeText={(email) => this.setState({email})}
-		                            style={styles.inputStyle}
-		                            autoCorrect={false}
-		                        />
-		                    </Item>
-		                    <Item floatingLabel last>
-		                        <Label>Password</Label>
-		                        <Input 
-		                        	onChangeText={(password) => this.setState({password})}
-		                            style={styles.inputStyle}
-		                            autoCorrect={false}
-		                            secureTextEntry
-		                        />
-		                    </Item>
-		                </Form>
-		                <View style={{marginTop: 10}}/>
-		                <Button primary block onPress={this.logIn}>
-	                        <Text style={{color: "white"}}>Sign Up/Sign In</Text>
-	                    </Button>
+							<Item floatingLabel>
+								<Label>Email</Label>
+								<Input
+									autoCorrect={false}
+									onChangeText={(email)=>this.setState({email})}
+								/>
+							</Item>
+							<Item floatingLabel>
+								<Label>Password</Label>
+								<Input
+									autoCorrect={false}
+									onChangeText={(password)=>this.setState({password})}
+									secureTextEntry
+								/>
+							</Item>
+						</Form>
+						<View style={{marginTop: 10}}>
+							<Button
+								primary
+								block
+								onPress={this.logIn}
+							>
+								<Text style={{color: 'white'}}>Sign In/Sign Up</Text>
+							</Button>
+						</View>
 					</View>
-				</ImageBackground>
+				</ImageBackground> 
 			</View>
 		)
 	}
 }
 
 const styles = {
-	viewStyle: {
-		flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        margin:10
-    },
 	backgroundImage: {
-	    flex: 1,
-	    resizeMode: 'cover',
-	    width: width,
-	    height: height
+		flex: 1,
+		resizeMode: 'cover',
+		width: width,
+		height: height
 	},
-	titleStyle: {
-		fontSize: 30,
-		color: "blue",
-		alignItems: 'center'
-	},
-	buttonStyle: {
+	inputStyle: {
+		flex: 1,
+		flexDirection: 'column',
+		justifyContent: 'center',
 		margin: 10
-	},
-	buttonText: {
-		color: 'white'
 	}
 }
 

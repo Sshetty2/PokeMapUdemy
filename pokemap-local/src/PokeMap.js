@@ -4,7 +4,6 @@ import {Header,Left,Button,Icon,Body,Title,Right,Fab} from 'native-base';
 import {MapView} from 'expo';
 import Meteor, {createContainer} from 'react-native-meteor';
 
-
 var mapStyle = [
     {
         "featureType": "all",
@@ -132,104 +131,102 @@ var mapStyle = [
 ];
 
 class PokeMap extends React.Component{
-    state = {
-        location: {
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }
-    }
+	state = {
+		location: {
+			latitude: 37.78825,
+			longitude: -122.4324,
+			latitudeDelta: 0.0922,
+			longitudeDelta: 0.0421
+		}
+	}
+	recordEvent = (x) =>{
+		console.log(x);
+		this.setState({location: x});
+	}
+	addPokemon = ()=>{
+		Meteor.call('pokemon.add',this.state.location, (err,res)=>{
+			console.log('add function', err,res);
+		})
+	}
+	removePokemon = ()=>{
+		if(this.props.pokemon.length === 0){
+			return;
+		}
+		var remove = this.props.pokemon[0]._id;
+		Meteor.call("pokemon.subtract", remove, (err,res)=>{
+			console.log('remove function',err,res);
+		})
+	}
+	renderPokemon = () =>{
+		return this.props.pokemon.map(p=>{
+			return(
+				<MapView.Marker 
+					coordinate={{latitude: p.latitude, longitude: p.longitude}}
+					key={p._id}
+				>
+					<Image 
+						source={{uri: "http://192.168.1.114:3000/"+p.image}} 
+						style={{height: 50,width:50}}
+					/>
+				</MapView.Marker>
+			)
+		})
+	}
 	logout = () =>{
 		Meteor.logout();
 		this.props.flipLogin(false);
 	}
-	recordEvent = (x) =>{
-		console.log(x)
-        this.setState({location: x});
-	}
-    addPokemon=()=> { // just generate some random number
-        Meteor.call('pokemon.add',this.state.location, (err, res) => {
-          // Do whatever you want with the response
-          console.log('pokemon', err, res);
-        });
-    }
-    removePokemon=()=>{
-        if(this.props.pokemon.length === 0){
-            return;
-        }
-        var remove = this.props.pokemon[0]._id;
-        Meteor.call('pokemon.subtract',remove, (err,res)=>{
-            console.log('remove', err,res);
-        })
-    }
-    renderPokemon = ()=>{
-        return this.props.pokemon.map(p=>{
-            return(
-                <MapView.Marker
-                  coordinate={{latitude: p.latitude,longitude: p.longitude}}
-                  key={p._id}
-                >
-                    <Image source={{uri: "http://localhost:3000/"+p.image}} style={styles.img}/>
-                </MapView.Marker>
-            )
-        })
-    }
 	render(){
-		console.log(Meteor.userId());
+		console.log(this.props.pokemon);
 		return(
 			<View style={{flex: 1}}>
 				<Header>
-                    <Left>
-                        
-                    </Left>
-                    <Body>
-                        <Title>PokeMap</Title>
-                    </Body>
-                    <Right>
-                        <Button transparent onPress={this.logout}>
-                            <Icon name='power' />
-                        </Button>
-                    </Right>
-                </Header>
-                <MapView 
-                	style={{flex: 1}}
-			        initialRegion={{
-			          latitude: 37.78825,
-			          longitude: -122.4324,
-			          latitudeDelta: 0.0922,
-			          longitudeDelta: 0.0421,
-			        }}
-			        provider={MapView.PROVIDER_GOOGLE}
+					<Left>
+
+					</Left>
+					<Body>
+						<Title>PokeMap</Title>
+					</Body>
+					<Right>
+						<Button transparent onPress={this.logout}>
+							<Icon name="power"/>
+						</Button>
+					</Right>
+				</Header>
+				<MapView
+					style={{flex: 1}}
+					initialRegion={this.state.location}
+					provider={MapView.PROVIDER_GOOGLE}
 					customMapStyle={mapStyle}
-                    onRegionChangeComplete={(x)=>this.recordEvent(x)}
-                >
-                    
-                	{this.renderPokemon()}
-                </MapView>
-                <Fab direction="left" position="bottomRight" style={{backgroundColor: 'green'}} onPress={this.addPokemon}>
-                  <Icon name="add" />
-                </Fab>
-                <Fab direction="right" position="bottomLeft" style={{backgroundColor: 'red'}} onPress={this.removePokemon}>
-                  <Icon name="remove" />
-                </Fab>
+					onRegionChangeComplete={(x)=>this.recordEvent(x)}
+				>
+					{this.renderPokemon()}
+				</MapView>
+				<Fab 
+					direction="left" 
+					position="bottomRight"
+					style={{backgroundColor: 'green'}}
+					onPress={this.addPokemon}
+				>
+					<Icon name="add"/>
+				</Fab>
+				<Fab 
+					direction="right" 
+					position="bottomLeft"
+					style={{backgroundColor: 'red'}}
+					onPress={this.removePokemon}
+				>
+					<Icon name="remove"/>
+				</Fab>
 			</View>
 		)
 	}
 }
 
-const styles = {
-	img: {
-		height: 50,
-		width: 50
-	}
-}
-
 export default createContainer(params=>{
-  Meteor.subscribe('pokemon');
- 
-  return {
-    pokemon: Meteor.collection('pokemon').find({})
-   
-  };
-}, PokeMap)
+	Meteor.subscribe('pokemon');
+
+	return{
+		pokemon: Meteor.collection('pokemon').find({})
+	};
+}, PokeMap);
